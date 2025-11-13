@@ -5,31 +5,51 @@ session_start(); //SE ABRE UNA SESIÓN
 $cadena_conexion = 'mysql:host=localhost;dbname=BD1;charset=utf8';
 $usuarioBD = 'habib';
 $password = 'habib071203';
+//VARIABLES DE PASSWORD ENCRIPTADAS
+$contrsena1= password_hash("usuario1", PASSWORD_DEFAULT);
+$contrsena2= password_hash("usuario2", PASSWORD_DEFAULT);
+$contrsena3= password_hash("usuario3", PASSWORD_DEFAULT);
+
 try {
     $bd = new PDO($cadena_conexion, $usuarioBD, $password);	
-	echo "Conexión realizada con éxito<br>";	
-
+	echo "Conexión realizada con éxito<br>";
+    //INSERTAMOS USUARIOS ADMIN Y NO ADMIN
+    //$ins1 = "INSERT INTO BD1.usuarios(user, password,rol) values ('user1', '$contrsena1', 1);";
+    //$ins2 = "INSERT INTO usuarios (user, password,rol) values ('user2', '$contrsena2', 0);";	
+    //$ins3 = "INSERT INTO usuarios (user, password,rol) values ('user3', '$contrsena3', 0);";		
+    //$insersiones = $bd->query($ins3);
 } catch (PDOException $e) {
 	echo 'Error con la base de datos: ' . $e->getMessage();
-} 
-//HACER CONSULTA CON USUARIO Y CLAVE
-//SELECT * FROM USUARIOS WHERE USER=$usuario AND PASSWORD=$clave;
+}
 
 //LOGIN
 if($_SERVER["REQUEST_METHOD"] =="POST"){
     $usuario = $_POST['usuario']; //SE DEFINE LA VARIABLE USUARIO
     $clave   = $_POST['clave']; //SE DEFINE LA VARIABLE CLAVE 
-//CAMBIAR EL IF 
-    if (isset($usuariosRegistrados[$usuario]) && $usuariosRegistrados[$usuario][0] == $clave) {
-        $rol = $usuariosRegistrados[$usuario][1];
-        if ($rol == 1) {
-            header("Location: administracion.php");
-        } else {
-            header("Location: principal.php");
-        }
-        exit;
+    if ($usuario === '' || $clave === '') {
+        $err = 'Rellena usuario y contraseña.';
     } else {
-        $err = true;
+        // Consulta preparada
+        $stmt = $bd->prepare('SELECT user, password, rol FROM usuarios WHERE user = :id');
+        //$stmt->execute([':id' => $usuario]); 
+        $stmt->execute(array(':id' => $usuario)); 
+        $fila = $stmt->fetch();
+
+        if ($fila && password_verify($clave, $fila['password'])) {
+            // Autenticado
+            session_regenerate_id(true);
+            $_SESSION['user'] = $fila['user'];
+            $_SESSION['rol']  = (int)$fila['rol'];
+
+            if ($_SESSION['rol'] === 1) {
+                header('Location: mainAdmin.php');
+            } else {
+                header('Location: mainViewer.php');
+            }
+            exit;
+        } else {
+            $err = 'Usuario o contraseña incorrectos.';
+        }
     }
 }?>
 <!--FORMULARIO LOG IN, SOLO PIDE USER Y PASSWORD-->
@@ -49,4 +69,3 @@ if($_SERVER["REQUEST_METHOD"] =="POST"){
     </form>
 </body>
 </html>
-
