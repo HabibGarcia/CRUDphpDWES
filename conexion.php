@@ -1,5 +1,5 @@
 <?php
-$cadena_conexion = 'mysql:host=localhost;dbname=BD1;charset=utf8';
+$cadena_conexion = 'mysql:host=localhost;dbname=bd1;charset=utf8';
 $usuarioBD = 'habib';
 $password = 'habib071203';
 //VARIABLES DE PASSWORD ENCRIPTADAS
@@ -8,6 +8,7 @@ $password = 'habib071203';
 //$contrsena3= password_hash("usuario3", PASSWORD_DEFAULT);
 try {
     $bd = new PDO($cadena_conexion, $usuarioBD, $password);	
+    //echo "conexión correcta";
     //INSERTAMOS USUARIOS ADMIN Y NO ADMIN
     //$ins1 = "INSERT INTO BD1.usuarios(user, password,rol) values ('user1', '$contrsena1', 1);";
     //$ins2 = "INSERT INTO usuarios (user, password,rol) values ('user2', '$contrsena2', 0);";	
