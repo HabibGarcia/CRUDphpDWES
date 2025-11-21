@@ -1,7 +1,7 @@
 <?php
 $cadena_conexion = 'mysql:host=localhost;dbname=BD1;charset=utf8';
-$usuarioBD = 'habib';
-$password = 'habib071203';
+$usuarioBD = ''; //COMPLETE
+$password = ''; //COMPLETE
 //VARIABLES DE PASSWORD ENCRIPTADAS
 //$contrsena1= password_hash("usuario1", PASSWORD_DEFAULT);
 //$contrsena2= password_hash("usuario2", PASSWORD_DEFAULT);
